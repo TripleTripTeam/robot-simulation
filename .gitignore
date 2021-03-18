@@ -1,0 +1,4 @@
+devel/
+build/
+src/venv/
+src/.idea/

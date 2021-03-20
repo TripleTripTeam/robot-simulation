@@ -16,7 +16,8 @@
 
 /* Authors: Taehun Lim (Darby) */
 
-#include "turtlebot3_gazebo/turtlebot3_drive.h"
+#include "turtlebot3_my_controller/turtlebot3_drive.h"
+#include "SCL.h"
 
 Turtlebot3Drive::Turtlebot3Drive()
         : nh_priv_("~") {
@@ -35,9 +36,9 @@ Turtlebot3Drive::~Turtlebot3Drive() {
 * Init function
 *******************************************************************************/
 bool Turtlebot3Drive::init() {
+    SCL::init();
     // initialize ROS parameter
     std::string cmd_vel_topic_name = nh_.param<std::string>("cmd_vel_topic_name", "");
-
     // initialize variables
     escape_range_ = 30.0 * DEG2RAD;
     check_forward_dist_ = 0.7;
@@ -90,52 +91,13 @@ void Turtlebot3Drive::updatecommandVelocity(double linear, double angular) {
 * Control Loop function
 *******************************************************************************/
 bool Turtlebot3Drive::controlLoop() {
-    static uint8_t turtlebot3_state_num = 0;
-
-    switch (turtlebot3_state_num) {
-        case GET_TB3_DIRECTION:
-            if (scan_data_[CENTER] > check_forward_dist_) {
-                if (scan_data_[LEFT] < check_side_dist_) {
-                    prev_tb3_pose_ = tb3_pose_;
-                    turtlebot3_state_num = TB3_RIGHT_TURN;
-                } else if (scan_data_[RIGHT] < check_side_dist_) {
-                    prev_tb3_pose_ = tb3_pose_;
-                    turtlebot3_state_num = TB3_LEFT_TURN;
-                } else {
-                    turtlebot3_state_num = TB3_DRIVE_FORWARD;
-                }
-            }
-
-            if (scan_data_[CENTER] < check_forward_dist_) {
-                prev_tb3_pose_ = tb3_pose_;
-                turtlebot3_state_num = TB3_RIGHT_TURN;
-            }
-            break;
-
-        case TB3_DRIVE_FORWARD:
-            updatecommandVelocity(LINEAR_VELOCITY, 0.0);
-            turtlebot3_state_num = GET_TB3_DIRECTION;
-            break;
-
-        case TB3_RIGHT_TURN:
-            if (fabs(prev_tb3_pose_ - tb3_pose_) >= escape_range_)
-                turtlebot3_state_num = GET_TB3_DIRECTION;
-            else
-                updatecommandVelocity(0.0, -1 * ANGULAR_VELOCITY);
-            break;
-
-        case TB3_LEFT_TURN:
-            if (fabs(prev_tb3_pose_ - tb3_pose_) >= escape_range_)
-                turtlebot3_state_num = GET_TB3_DIRECTION;
-            else
-                updatecommandVelocity(0.0, ANGULAR_VELOCITY);
-            break;
-
-        default:
-            turtlebot3_state_num = GET_TB3_DIRECTION;
-            break;
+//    json tmp;
+    auto retv = SCL::send_GET_request("http://192.168.43.25:8000/remote_cars/coordinates/1/move");
+    if (retv.empty()) {
+        ROS_INFO("Empty");
+    } else {
+        updatecommandVelocity(retv["speed"], retv["angle"]);
     }
-
     return true;
 }
 
@@ -145,14 +107,11 @@ bool Turtlebot3Drive::controlLoop() {
 int main(int argc, char *argv[]) {
     ros::init(argc, argv, "turtlebot3_drive");
     Turtlebot3Drive turtlebot3_drive;
-
     ros::Rate loop_rate(125);
-
     while (ros::ok()) {
         turtlebot3_drive.controlLoop();
         ros::spinOnce();
         loop_rate.sleep();
     }
-
     return 0;
 }

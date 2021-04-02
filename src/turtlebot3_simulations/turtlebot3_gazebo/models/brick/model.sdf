@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+    <model name="brick">
+        <static>true</static>
+        <link name="brick_link">
+            <collision name="brick_collision">
+                <geometry>
+                    <box>
+                        <size> 0.10 0.10 0.10 </size>
+                    </box>
+                </geometry>
+            </collision>
+
+            <visual name="brick_mesh">
+                <geometry>
+                    <mesh>
+                        <scale>0.0008 0.0008 0.0008</scale>
+                        <uri>model://brick/brick.dae</uri>
+                    </mesh>
+                </geometry>
+            </visual>
+        </link>
+    </model>
+</sdf>

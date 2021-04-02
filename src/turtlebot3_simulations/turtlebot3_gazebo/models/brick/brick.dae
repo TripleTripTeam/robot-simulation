@@ -136,7 +136,7 @@
       <init_from>Brick_Non_Uniform_Running_Red.png</init_from>
     </image>
     <image id="Thermal_Moisture_Roofing_Siding_Panels_Wood_Horizontal_Beige_pn" name="Thermal_Moisture_Roofing_Siding_Panels_Wood_Horizontal_Beige_pn">
-      <init_from>Thermal_Moisture.Roofing_Siding%20Panels.Wood.Horizontal.Beige.pn.png</init_from>
+      <init_from>Thermal_Moisture_Roofing_Siding_Panels_Wood_Horizontal_Beige_pn.png</init_from>
     </image>
   </library_images>
   <library_materials>

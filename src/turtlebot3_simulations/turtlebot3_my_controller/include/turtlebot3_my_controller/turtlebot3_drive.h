@@ -21,7 +21,10 @@
 
 #include <ros/ros.h>
 
+#include <utility>
+
 #include <sensor_msgs/LaserScan.h>
+//#include <sensor_msgs/C
 #include <geometry_msgs/Twist.h>
 #include <nav_msgs/Odometry.h>
 
@@ -40,43 +43,55 @@
 #define TB3_RIGHT_TURN    2
 #define TB3_LEFT_TURN     3
 
-class Turtlebot3Drive
-{
- public:
-  Turtlebot3Drive();
-  ~Turtlebot3Drive();
-  bool init();
-  bool controlLoop();
+class Turtlebot3Drive {
+public:
+    Turtlebot3Drive();
 
- private:
-  // ROS NodeHandle
-  ros::NodeHandle nh_;
-  ros::NodeHandle nh_priv_;
+    ~Turtlebot3Drive();
 
-  // ROS Parameters
+    bool init();
 
-  // ROS Time
+    bool controlLoop();
 
-  // ROS Topic Publishers
-  ros::Publisher cmd_vel_pub_;
+private:
+    // ROS NodeHandle
+    ros::NodeHandle nh_;
+    ros::NodeHandle nh_priv_;
 
-  // ROS Topic Subscribers
-  ros::Subscriber laser_scan_sub_;
-  ros::Subscriber odom_sub_;
+    // ROS Parameters
 
-  // Variables
-  double escape_range_;
-  double check_forward_dist_;
-  double check_side_dist_;
+    // ROS Time
 
-  double scan_data_[3] = {0.0, 0.0, 0.0};
+    // ROS Topic Publishers
+    ros::Publisher cmd_vel_pub_;
 
-  double tb3_pose_;
-  double prev_tb3_pose_;
+    // ROS Topic Subscribers
+    ros::Subscriber laser_scan_sub_;
+    ros::Subscriber odom_sub_;
+    ros::Subscriber camera_image_sub_;
 
-  // Function prototypes
-  void updatecommandVelocity(double linear, double angular);
-  void laserScanMsgCallBack(const sensor_msgs::LaserScan::ConstPtr &msg);
-  void odomMsgCallBack(const nav_msgs::Odometry::ConstPtr &msg);
+    // Variables
+    double escape_range_;
+    double check_forward_dist_;
+    double check_side_dist_;
+
+    std::pair<double, double> _last_com_vector;
+    double _x_pos;
+    double _y_pos;
+    double _z_pos;
+    std::array<double, 360> _lidar_data;
+
+    double tb3_pose_;
+    double prev_tb3_pose_;
+
+    // Function prototypes
+    void updatecommandVelocity(double linear, double angular);
+
+    void laserScanMsgCallBack(const sensor_msgs::LaserScan::ConstPtr &msg);
+
+    void odomMsgCallBack(const nav_msgs::Odometry::ConstPtr &msg);
+
+//    void cameraIamgeCallBack(const sensor_msgs::)
 };
+
 #endif // TURTLEBOT3_DRIVE_H_

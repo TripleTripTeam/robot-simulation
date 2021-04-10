@@ -33,7 +33,7 @@ find_package(gazebo REQUIRED)
 ################################################################################
 # Declare ROS dynamic reconfigure parameters
 ################################################################################
-
+add_definitions(-DTURTLEBOT3_SERVER_CONNECTED)
 ################################################################################
 # Declare catkin specific configuration to be passed to dependent projects
 ################################################################################
@@ -56,7 +56,8 @@ include_directories(
   ${GAZEBO_INCLUDE_DIRS}
 )
 
-add_executable(turtlebot3_custom_drive src/turtlebot3_drive.cpp)
+add_executable(turtlebot3_custom_drive src/turtlebot3_drive.cpp src/serverHandler.cpp)
+
 add_dependencies(turtlebot3_custom_drive ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 target_include_directories(turtlebot3_custom_drive PUBLIC include/SCL)

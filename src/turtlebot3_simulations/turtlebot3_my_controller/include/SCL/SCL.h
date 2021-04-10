@@ -16,7 +16,6 @@ namespace SCL {
     void init();
     void deinit();
 
-//    json send_GET_request(const std::string& url, json &req_json);
     json send_GET_request(const std::string& url);
 
     json send_POST_request(const std::string& url, json &req_json);

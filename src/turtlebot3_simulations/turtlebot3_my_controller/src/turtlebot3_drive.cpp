@@ -17,7 +17,8 @@
 /* Authors: Taehun Lim (Darby) */
 
 #include "turtlebot3_my_controller/turtlebot3_drive.h"
-#include "SCL.h"
+#include "serverHandler/serverHandler.h"
+#include <algorithm>
 
 Turtlebot3Drive::Turtlebot3Drive()
         : nh_priv_("~") {
@@ -53,6 +54,7 @@ bool Turtlebot3Drive::init() {
     // initialize subscribers
     laser_scan_sub_ = nh_.subscribe("scan", 10, &Turtlebot3Drive::laserScanMsgCallBack, this);
     odom_sub_ = nh_.subscribe("odom", 10, &Turtlebot3Drive::odomMsgCallBack, this);
+//    camera_image_sub_ = nh_.subscribe("camera/image", 10, )
 
     return true;
 }
@@ -62,20 +64,14 @@ void Turtlebot3Drive::odomMsgCallBack(const nav_msgs::Odometry::ConstPtr &msg) {
                          msg->pose.pose.orientation.x * msg->pose.pose.orientation.y);
     double cosy = 1.0 - 2.0 * (msg->pose.pose.orientation.y * msg->pose.pose.orientation.y +
                                msg->pose.pose.orientation.z * msg->pose.pose.orientation.z);
-
+    _x_pos = msg->pose.pose.position.x;
+    _y_pos = msg->pose.pose.position.y;
+    _z_pos = msg->pose.pose.position.z;
     tb3_pose_ = atan2(siny, cosy);
 }
-
+#include <iostream>
 void Turtlebot3Drive::laserScanMsgCallBack(const sensor_msgs::LaserScan::ConstPtr &msg) {
-    uint16_t scan_angle[3] = {0, 30, 330};
-
-    for (int num = 0; num < 3; num++) {
-        if (std::isinf(msg->ranges.at(scan_angle[num]))) {
-            scan_data_[num] = msg->range_max;
-        } else {
-            scan_data_[num] = msg->ranges.at(scan_angle[num]);
-        }
-    }
+    std::copy(msg->ranges.begin(), msg->ranges.end(), _lidar_data.begin());
 }
 
 void Turtlebot3Drive::updatecommandVelocity(double linear, double angular) {
@@ -91,13 +87,12 @@ void Turtlebot3Drive::updatecommandVelocity(double linear, double angular) {
 * Control Loop function
 *******************************************************************************/
 bool Turtlebot3Drive::controlLoop() {
-//    json tmp;
-    auto retv = SCL::send_GET_request("http://192.168.43.25:8000/remote_cars/coordinates/1/move");
-    if (retv.empty()) {
-        ROS_INFO("Empty");
-    } else {
-        updatecommandVelocity(retv["speed"], retv["angle"]);
-    }
+#ifdef TURTLEBOT3_SERVER_CONNECTED
+    auto vel_com = serverHandler::getControlVector(_last_com_vector);
+    updatecommandVelocity(vel_com.first, vel_com.second);
+    _last_com_vector = vel_com;
+    serverHandler::sendCarTelemetry(_x_pos, _y_pos, _z_pos, _lidar_data);
+#endif
     return true;
 }
 
@@ -108,10 +103,12 @@ int main(int argc, char *argv[]) {
     ros::init(argc, argv, "turtlebot3_drive");
     Turtlebot3Drive turtlebot3_drive;
     ros::Rate loop_rate(125);
+    serverHandler::init();
     while (ros::ok()) {
         turtlebot3_drive.controlLoop();
         ros::spinOnce();
         loop_rate.sleep();
     }
+    serverHandler::deinit();
     return 0;
 }

@@ -77,7 +77,7 @@ void Turtlebot3Drive::laserScanMsgCallBack(const sensor_msgs::LaserScan::ConstPt
 }
 
 void Turtlebot3Drive::cameraImageCallBack(const sensor_msgs::Image::ConstPtr &msg) {
-    std::cout << msg->data.size() << std::endl;
+//    std::cout << msg->data.size() << std::endl;
 }
 
 void Turtlebot3Drive::updatecommandVelocity(double linear, double angular) {

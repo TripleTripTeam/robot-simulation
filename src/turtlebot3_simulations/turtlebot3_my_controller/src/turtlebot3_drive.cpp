@@ -54,7 +54,7 @@ bool Turtlebot3Drive::init() {
     // initialize subscribers
     laser_scan_sub_ = nh_.subscribe("scan", 10, &Turtlebot3Drive::laserScanMsgCallBack, this);
     odom_sub_ = nh_.subscribe("odom", 10, &Turtlebot3Drive::odomMsgCallBack, this);
-//    camera_image_sub_ = nh_.subscribe("camera/image", 10, )
+    camera_image_sub_ = nh_.subscribe("camera/image", 10, &Turtlebot3Drive::cameraImageCallBack, this);
 
     return true;
 }
@@ -69,9 +69,15 @@ void Turtlebot3Drive::odomMsgCallBack(const nav_msgs::Odometry::ConstPtr &msg) {
     _z_pos = msg->pose.pose.position.z;
     tb3_pose_ = atan2(siny, cosy);
 }
+
 #include <iostream>
+
 void Turtlebot3Drive::laserScanMsgCallBack(const sensor_msgs::LaserScan::ConstPtr &msg) {
     std::copy(msg->ranges.begin(), msg->ranges.end(), _lidar_data.begin());
+}
+
+void Turtlebot3Drive::cameraImageCallBack(const sensor_msgs::Image::ConstPtr &msg) {
+    std::cout << msg->data.size() << std::endl;
 }
 
 void Turtlebot3Drive::updatecommandVelocity(double linear, double angular) {

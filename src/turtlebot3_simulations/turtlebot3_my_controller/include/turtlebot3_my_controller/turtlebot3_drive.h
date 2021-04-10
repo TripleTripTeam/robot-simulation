@@ -24,7 +24,7 @@
 #include <utility>
 
 #include <sensor_msgs/LaserScan.h>
-//#include <sensor_msgs/C
+#include <sensor_msgs/Image.h>
 #include <geometry_msgs/Twist.h>
 #include <nav_msgs/Odometry.h>
 
@@ -91,7 +91,7 @@ private:
 
     void odomMsgCallBack(const nav_msgs::Odometry::ConstPtr &msg);
 
-//    void cameraIamgeCallBack(const sensor_msgs::)
+    void cameraImageCallBack(const sensor_msgs::Image::ConstPtr &msg);
 };
 
 #endif // TURTLEBOT3_DRIVE_H_

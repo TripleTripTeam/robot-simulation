@@ -137,13 +137,13 @@
     <joint name="scan_joint" type="fixed">
         <parent link="base_link"/>
         <child link="base_lidar"/>
-        <origin xyz="-0.032 0 0.172" rpy="0 0 0"/>
+        <origin xyz="-0.022519 0.002564 0.140612" rpy="0 0 0"/>
     </joint>
 
     <link name="base_lidar">
-        <pose>0 0 0.029335 0 0 0</pose>
+        <origin xyz="0 0 0.029335" rpy="0 0 0"/>
         <inertial>
-            <mass value="1.2"/>
+            <mass value="0.2"/>
             <inertia ixx="0.001087473" ixy="0" ixz="0" iyy="0.001087473" iyz="0" izz="0.001092437"/>
         </inertial>
 
@@ -153,16 +153,16 @@
             </geometry>
         </collision>
 
-        <!--        <visual name="base_visual">-->
-        <!--            <pose>0 0 -0.029335 0 0 0</pose>-->
-        <!--            <geometry>-->
-        <!--                <mesh filename="model://velodyne_hdl32/meshes/velodyne_base.dae"/>-->
-        <!--            </geometry>-->
-        <!--        </visual>-->
+        <visual name="base_visual">
+            <pose>0 0 -0.029335 0 0 0</pose>
+            <geometry>
+                <mesh filename="model://velodyne_hdl32/meshes/velodyne_base.dae"/>
+            </geometry>
+        </visual>
     </link>
 
     <link name="top_lidar">
-        <pose>0 0 0.095455 0 0 0</pose>
+        <origin rpy="0 0 0" xyz="0 0 0.095455"/>
 
         <inertial>
             <mass value="0.1"/>
@@ -185,7 +185,7 @@
     </link>
 
     <joint type="revolute" name="velodyne_joint">
-        <pose>0 0 -0.036785 0 0 0</pose>
+        <origin xyz="0 0 0.056785" rpy="0 0 0"/>
         <parent link="base_lidar"/>
         <child link="top_lidar"/>
         <axis xyz="0 0 1"/>

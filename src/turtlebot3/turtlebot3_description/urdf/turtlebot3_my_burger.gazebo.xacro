@@ -104,7 +104,7 @@
     <gazebo reference="top_lidar">
         <sensor type="ray" name="sensor">
             <always_on>true</always_on>
-            <pose>0 0 -0.004645 1.5707 0 0</pose>
+            <pose>0 0 0.04 1.5707 0 0</pose>
             <visualize>true</visualize>
             <ray>
                 <noise>

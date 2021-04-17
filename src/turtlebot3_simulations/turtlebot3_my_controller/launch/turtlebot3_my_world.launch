@@ -12,7 +12,7 @@
          default="/home/vadim/robot-simulation/src/turtlebot3_simulations/turtlebot3_my_controller/models/brick/model.sdf"/>
 
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
-        <arg name="paused" value="true"/>
+        <arg name="paused" value="false"/>
         <arg name="use_sim_time" value="true"/>
         <arg name="gui" value="true"/>
         <arg name="headless" value="false"/>

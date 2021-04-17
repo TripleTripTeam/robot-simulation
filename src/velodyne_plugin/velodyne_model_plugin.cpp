@@ -4,10 +4,14 @@
 
 #include "velodyne_model_plugin.h"
 
-#define PRINT_CUSTOM_INFO(msg) do { std::cout << "[CUSTOM_INFO]: " << msg << std::endl; } while(0);
+#ifdef MODEL_PRINT_CUSTOM_INFO
+#define PRINT_CUSTOM_INFO(msg) do { std::cout << "[CUSTOM_INFO]: " << (msg) << std::endl; } while(0);
+#else
+#define PRINT_CUSTOM_INFO(msg)
+#endif
 
 namespace gazebo {
-    GZ_REGISTER_MODEL_PLUGIN(Velodyne_model_plugin);
+    GZ_REGISTER_MODEL_PLUGIN(Velodyne_model_plugin)
 
     ////////////////////////////////////////
     ////    Private members

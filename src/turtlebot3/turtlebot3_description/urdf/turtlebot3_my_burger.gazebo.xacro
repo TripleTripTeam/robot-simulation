@@ -131,10 +131,10 @@
     </gazebo>
 
     <gazebo>
-<!--        <plugin name="velodyne_model_control" filename="libvelodyne_model_plugin.so">-->
-<!--            <rotate_speed>0</rotate_speed>-->
-<!--        </plugin>-->
-        <plugin name="velodyne_sensor_control" filename="libvelodyne_sensor_plugin.so"/>
+        <plugin name="velodyne_model_control" filename="libvelodyne_model_plugin.so">
+            <rotate_speed>10</rotate_speed>
+        </plugin>
+<!--        <plugin name="velodyne_sensor_control" filename="libvelodyne_sensor_plugin.so"/>-->
     </gazebo>
 
     <!--link : https://www.raspberrypi.org/documentation/hardware/camera/-->

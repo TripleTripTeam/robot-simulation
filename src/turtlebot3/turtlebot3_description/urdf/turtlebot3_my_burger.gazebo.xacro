@@ -104,7 +104,7 @@
     <gazebo reference="top_lidar">
         <sensor type="ray" name="sensor">
             <always_on>true</always_on>
-            <pose>0 0 0.04 1.5707 0 0</pose>
+            <pose>0 0 0.04 1.5707 0 -1.6</pose>
             <visualize>true</visualize>
             <ray>
                 <noise>
@@ -131,9 +131,10 @@
     </gazebo>
 
     <gazebo>
-        <plugin name="velodyne_control" filename="libvelodyne_plugin.so">
-            <velocity>25</velocity>
-        </plugin>
+<!--        <plugin name="velodyne_model_control" filename="libvelodyne_model_plugin.so">-->
+<!--            <rotate_speed>0</rotate_speed>-->
+<!--        </plugin>-->
+        <plugin name="velodyne_sensor_control" filename="libvelodyne_sensor_plugin.so"/>
     </gazebo>
 
     <!--link : https://www.raspberrypi.org/documentation/hardware/camera/-->

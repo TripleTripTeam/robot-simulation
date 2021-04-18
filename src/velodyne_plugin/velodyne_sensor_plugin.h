@@ -22,7 +22,7 @@
 #include "ros/advertise_options.h"
 #include "ros/transport_publisher_link.h"
 
-#include "std_msgs/Float32.h"
+#include "std_msgs/Float32MultiArray.h"
 
 using namespace gazebo::sensors;
 
@@ -36,10 +36,36 @@ namespace gazebo {
 
         ~Velodyne_sensor_plugin();
 
+        /// \brief The load function is called by Gazebo when the plugin is
+        /// inserted into simulation
+        /// \param[in] _sensor A pointer to the sensor that this plugin is
+        /// attached to.
+        /// \param[in] _sdf A pointer to the plugin's SDF element.
         void Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf) override;
 
     private:
-        sdf::ElementPtr sdf;
+        sensors::SensorPtr sensor; /// \brief Pointer to the sensor.
+
+        std::unique_ptr<ros::NodeHandle> rosNode; /// \brief A node use for ROS transport
+        ros::Subscriber rosSub; /// \brief A ROS subscriber
+        ros::Publisher rosPub; /// \brief A ROS publisher
+
+        PubQueue<std_msgs::Float32MultiArray>::Ptr pub_queue_;
+        std::thread pub_thread;
+        PubMultiQueue pmq;
+
+        std::string _topic_lidar_data_name;
+
+        int subs_count;
+
+        /// \brief Publisher thread function
+        void PubThread();
+
+        /// \brief Publisher option connect function
+        void LidarTopicConnected();
+
+        /// \brief Publisher option disconnect function
+        void LidarTopicDisconnected();
     };
 
 }

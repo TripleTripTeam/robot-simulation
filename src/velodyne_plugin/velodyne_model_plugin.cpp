@@ -5,7 +5,7 @@
 #include "velodyne_model_plugin.h"
 
 #ifdef MODEL_PRINT_CUSTOM_INFO
-#define PRINT_CUSTOM_INFO(msg) do { std::cout << "[CUSTOM_INFO]: " << (msg) << std::endl; } while(0);
+#define PRINT_CUSTOM_INFO(msg) do { std::cout << "[CUSTOM_INFO]: " << (msg) << std::endl; } while(0)
 #else
 #define PRINT_CUSTOM_INFO(msg)
 #endif

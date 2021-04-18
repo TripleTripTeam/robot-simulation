@@ -5,7 +5,7 @@
 #include "velodyne_sensor_plugin.h"
 
 #ifdef SENSOR_PRINT_CUSTOM_INFO
-#define PRINT_CUSTOM_INFO(msg) do { std::cout << "[CUSTOM_INFO]: " << (msg) << std::endl; } while(0);
+#define PRINT_CUSTOM_INFO(msg) do { std::cout << "[CUSTOM_INFO]: " << (msg) << std::endl; } while(0)
 #else
 #define PRINT_CUSTOM_INFO(msg)
 #endif
@@ -17,7 +17,25 @@ namespace gazebo {
     ////    Private members
     ////////////////////////////////////////
 
+    void Velodyne_sensor_plugin::PubThread() {
+        ros::Rate ros_sleep(100);
+        while (this->rosNode->ok() && subs_count) {
+            PRINT_CUSTOM_INFO(subs_count);
+            ros_sleep.sleep();
+        }
+    }
 
+    void Velodyne_sensor_plugin::LidarTopicConnected() {
+        subs_count++;
+        if (subs_count == 1)
+            pub_thread = std::thread(std::bind(&Velodyne_sensor_plugin::PubThread, this));
+        PRINT_CUSTOM_INFO("VELODYNE SENSOR LIDAR DATA TOPIC CONNECTED");
+    }
+
+    void Velodyne_sensor_plugin::LidarTopicDisconnected() {
+        subs_count--;
+        PRINT_CUSTOM_INFO("VELODYNE SENSOR LIDAR DATA TOPIC DISCONNECTED");
+    }
 
     ////////////////////////////////////////
     ////    Public members
@@ -25,7 +43,7 @@ namespace gazebo {
 
     Velodyne_sensor_plugin::Velodyne_sensor_plugin() {
         PRINT_CUSTOM_INFO("VELODYNE SENSOR CTOR BEGIN");
-        // nothing
+        _topic_lidar_data_name = "/velodyne/lidar_data";
         PRINT_CUSTOM_INFO("VELODYNE SENSOR CTOR END");
     }
 
@@ -37,21 +55,29 @@ namespace gazebo {
 
     void Velodyne_sensor_plugin::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf) {
         PRINT_CUSTOM_INFO("VELODYNE SENSOR LOAD BEGIN");
-        std::string str;
-        std::cout << _sdf->ToString(str) << std::endl;
-        std::cout << _sdf->HasElement("pose") << std::endl;
-//        std::cout << _sdf->GetElementImpl("pose")->GetValue()->GetAsString() << std::endl;
-//        std::cout << _sdf->GetElementImpl("ray")->GetElementImpl("noise")->GetElementImpl("stddev")->GetValue()->GetAsString() << std::endl;
-//        std::cout << _sdf->GetElementImpl("ray")->GetElementImpl("scan")->GetElementImpl("horizontal")->GetElementImpl("max_angl")->GetValue()->GetTypeName() << std::endl;
-//        std::cout << _sdf->GetElementImpl("ray")->GetElementImpl("scan")->GetElementImpl("horizontal")->GetElementImpl("max_angl")->GetValue()->GetAsString() << std::endl;
-        if (_sdf->HasAttribute("visualize")) {
-            PRINT_CUSTOM_INFO("VELODYNE SENSOR pos found");
-            auto out = _sdf->Get<std::string>("pose");
-            for (auto i : out) {
-                std::cout << i;
-            }
-            std::cout << std::endl;
+        sensor = _sensor;
+        _sensor->Load(_sensor->WorldName(), _sdf);
+
+        subs_count = 0;
+
+        if (!ros::isInitialized()) {
+            int argc = 0;
+            char **argv = NULL;
+            ros::init(argc, argv, "gazebo_client",
+                      ros::init_options::NoSigintHandler);
         }
+        this->rosNode.reset(new ros::NodeHandle("gazebo_client"));
+
+        ros::AdvertiseOptions ao =
+                ros::AdvertiseOptions::create<std_msgs::Float32MultiArray>(
+                        _topic_lidar_data_name + "_ros",
+                        10,
+                        boost::bind(&Velodyne_sensor_plugin::LidarTopicConnected, this),
+                        boost::bind(&Velodyne_sensor_plugin::LidarTopicDisconnected, this),
+                        ros::VoidPtr(), NULL);
+        this->rosPub = this->rosNode->advertise(ao);
+        pub_queue_ = pmq.addPub<std_msgs::Float32MultiArray>();
+
         PRINT_CUSTOM_INFO("VELODYNE SENSOR LOAD END");
     }
 }

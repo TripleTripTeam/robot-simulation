@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
+add_compile_options(-std=c++14)
+
 find_package(roscpp REQUIRED)
 find_package(std_msgs REQUIRED)
 include_directories(${roscpp_INCLUDE_DIRS})
@@ -11,7 +13,7 @@ include_directories(${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIR} ${GAZEBO_INCLUDE
 link_directories(${GAZEBO_LIBRARY_DIRS})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 
-#add_definitions(-DMODEL_PRINT_CUSTOM_INFO)
+add_definitions(-DMODEL_PRINT_CUSTOM_INFO)
 add_definitions(-DSENSOR_PRINT_CUSTOM_INFO)
 
 # Build our plugin

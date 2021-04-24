@@ -27,14 +27,19 @@ namespace gazebo {
 
     void Velodyne_sensor_plugin::LidarTopicConnected() {
         subs_count++;
-        if (subs_count == 1)
-            pub_thread = std::thread(std::bind(&Velodyne_sensor_plugin::PubThread, this));
         PRINT_CUSTOM_INFO("VELODYNE SENSOR LIDAR DATA TOPIC CONNECTED");
     }
 
     void Velodyne_sensor_plugin::LidarTopicDisconnected() {
         subs_count--;
         PRINT_CUSTOM_INFO("VELODYNE SENSOR LIDAR DATA TOPIC DISCONNECTED");
+    }
+
+    void Velodyne_sensor_plugin::OnUpdate(sensors::RaySensorPtr _sensor) {
+        std_msgs::Float32MultiArray msg;
+        for (int i = 0; i < _sensor->RangeCount(); ++i)
+            msg.data.push_back(_sensor->Range(i));
+        rosPub.publish(msg);
     }
 
     ////////////////////////////////////////
@@ -55,7 +60,7 @@ namespace gazebo {
 
     void Velodyne_sensor_plugin::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf) {
         PRINT_CUSTOM_INFO("VELODYNE SENSOR LOAD BEGIN");
-        sensor = _sensor;
+        sensor = std::dynamic_pointer_cast<sensors::RaySensor>(_sensor);
         _sensor->Load(_sensor->WorldName(), _sdf);
 
         subs_count = 0;
@@ -76,8 +81,9 @@ namespace gazebo {
                         boost::bind(&Velodyne_sensor_plugin::LidarTopicDisconnected, this),
                         ros::VoidPtr(), NULL);
         this->rosPub = this->rosNode->advertise(ao);
-        pub_queue_ = pmq.addPub<std_msgs::Float32MultiArray>();
 
+        this->connection = this->sensor->ConnectUpdated(
+                std::bind(&Velodyne_sensor_plugin::OnUpdate, this, this->sensor));
         PRINT_CUSTOM_INFO("VELODYNE SENSOR LOAD END");
     }
 }

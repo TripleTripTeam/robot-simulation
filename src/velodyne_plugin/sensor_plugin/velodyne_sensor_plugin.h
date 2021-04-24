@@ -43,12 +43,16 @@ namespace gazebo {
         /// \param[in] _sdf A pointer to the plugin's SDF element.
         void Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf) override;
 
+        void OnUpdate(sensors::RaySensorPtr _sensor);
+
     private:
-        sensors::SensorPtr sensor; /// \brief Pointer to the sensor.
+        sensors::RaySensorPtr sensor; /// \brief Pointer to the sensor.
 
         std::unique_ptr<ros::NodeHandle> rosNode; /// \brief A node use for ROS transport
         ros::Subscriber rosSub; /// \brief A ROS subscriber
         ros::Publisher rosPub; /// \brief A ROS publisher
+
+        event::ConnectionPtr connection;
 
         PubQueue<std_msgs::Float32MultiArray>::Ptr pub_queue_;
         std::thread pub_thread;

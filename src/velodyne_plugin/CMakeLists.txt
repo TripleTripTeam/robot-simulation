@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+project(VelodyneLidar)
 
 add_compile_options(-std=c++14)
 
@@ -17,10 +18,14 @@ add_definitions(-DMODEL_PRINT_CUSTOM_INFO)
 add_definitions(-DSENSOR_PRINT_CUSTOM_INFO)
 
 # Build our plugin
-add_library(velodyne_model_plugin SHARED model_plugin/velodyne_model_plugin.h
-                                         model_plugin/velodyne_model_plugin.cpp)
+add_library(velodyne_model_plugin SHARED
+        msg/VelodyneModel.h
+        model_plugin/velodyne_model_plugin.h
+        model_plugin/velodyne_model_plugin.cpp)
 target_link_libraries(velodyne_model_plugin ${GAZEBO_LIBRARIES} ${roscpp_LIBRARIES})
 
-add_library(velodyne_sensor_plugin SHARED sensor_plugin/velodyne_sensor_plugin.h
-                                          sensor_plugin/velodyne_sensor_plugin.cpp)
+add_library(velodyne_sensor_plugin SHARED
+        msg/VelodyneSensor.h
+        sensor_plugin/velodyne_sensor_plugin.h
+        sensor_plugin/velodyne_sensor_plugin.cpp)
 target_link_libraries(velodyne_sensor_plugin ${GAZEBO_LIBRARIES} ${roscpp_LIBRARIES})

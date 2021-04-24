@@ -23,6 +23,8 @@
 #include "ros/transport_publisher_link.h"
 
 #include "std_msgs/Float32MultiArray.h"
+#include "../msg/VelodyneSensor.h"
+#include "../msg/VelodyneModel.h"
 
 using namespace gazebo::sensors;
 

@@ -20,6 +20,7 @@
 #include "ros/transport_publisher_link.h"
 
 #include "std_msgs/Float32.h"
+#include "../msg/VelodyneModel.h"
 
 namespace gazebo {
 
@@ -60,7 +61,7 @@ namespace gazebo {
         transport::NodePtr node; /// \brief A node used for transport
         transport::SubscriberPtr sub; /// \brief A subscriber to a named topic.
 
-        PubQueue<std_msgs::Float32>::Ptr pub_queue_;
+        PubQueue<msg_generatorstd_msgs::VelodyneModel>::Ptr pub_queue_;
         std::thread pub_thread;
         PubMultiQueue pmq;
 

@@ -29,10 +29,12 @@ namespace gazebo {
     }
 
     void Velodyne_model_plugin::PubThread() {
-        std_msgs::Float32 msg;
+        msg_generatorstd_msgs::VelodyneModel msg;
+        msg.header.stamp.init();
         ros::Rate ros_sleep(100);
         while (this->rosNode->ok()) {
-            msg.data = GetCurrentAngle();
+            msg.angle = GetCurrentAngle();
+            msg.header.stamp = ros::Time().now();
             this->rosPub.publish(msg);
             ros_sleep.sleep();
         }
@@ -111,14 +113,14 @@ namespace gazebo {
         this->rosSub = this->rosNode->subscribe(so);
 
         ros::AdvertiseOptions ao =
-                ros::AdvertiseOptions::create<std_msgs::Float32>(
+                ros::AdvertiseOptions::create<msg_generatorstd_msgs::VelodyneModel>(
                         "/" + this->model->GetName() + _topic_rotate_angle_msg_name + "_ros",
                         10,
                         boost::bind(&Velodyne_model_plugin::PosTopicConnected, this),
                         boost::bind(&Velodyne_model_plugin::PosTopicDisconnected, this),
                         ros::VoidPtr(), NULL);
         this->rosPub = this->rosNode->advertise(ao);
-        pub_queue_ = pmq.addPub<std_msgs::Float32>();
+        pub_queue_ = pmq.addPub<msg_generatorstd_msgs::VelodyneModel>();
 
         this->rosQueueThread =
                 std::thread(std::bind(&Velodyne_model_plugin::QueueThread, this));

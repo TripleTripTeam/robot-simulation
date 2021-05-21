@@ -22,6 +22,11 @@
 #include "ros/advertise_options.h"
 #include "ros/transport_publisher_link.h"
 
+#include <message_filters/subscriber.h>
+#include <message_filters/time_synchronizer.h>
+#include <message_filters/synchronizer.h>
+#include <message_filters/sync_policies/approximate_time.h>
+
 #include "std_msgs/Float32MultiArray.h"
 #include "../msg/VelodyneSensor.h"
 #include "../msg/VelodyneModel.h"
@@ -45,21 +50,32 @@ namespace gazebo {
         /// \param[in] _sdf A pointer to the plugin's SDF element.
         void Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf) override;
 
-        void OnUpdate(sensors::RaySensorPtr _sensor);
+        void SyncFunc(const msg_generatorstd_msgs::VelodyneModelConstPtr &model,
+                      const msg_generatorstd_msgs::VelodyneSensorConstPtr &sensor);
 
     private:
         sensors::RaySensorPtr sensor; /// \brief Pointer to the sensor.
-
         std::unique_ptr<ros::NodeHandle> rosNode; /// \brief A node use for ROS transport
+
         ros::Subscriber rosSub; /// \brief A ROS subscriber
-        ros::Publisher rosPub; /// \brief A ROS publisher
+        ros::Publisher rosPubInternal; /// \brief A ROS internal publisher
+        ros::Publisher rosPubCheckInitialization; /// \brief A ROS check init model plugin publisher
+        ros::Publisher rosPubExternal; /// \brief A ROS external publisher
 
         event::ConnectionPtr connection;
 
+        message_filters::Subscriber<msg_generatorstd_msgs::VelodyneModel> mfsm;
+        message_filters::Subscriber<msg_generatorstd_msgs::VelodyneSensor> mfss;
+        typedef message_filters::sync_policies::ApproximateTime<msg_generatorstd_msgs::VelodyneModel,
+                msg_generatorstd_msgs::VelodyneSensor> MySyncPolicy;
+        typedef message_filters::Synchronizer<MySyncPolicy> Sync;
+        boost::shared_ptr<Sync> sync_;
+
+
         PubQueue<std_msgs::Float32MultiArray>::Ptr pub_queue_;
+
         std::thread pub_thread;
         PubMultiQueue pmq;
-
         std::string _topic_lidar_data_name;
 
         int subs_count;
@@ -72,6 +88,12 @@ namespace gazebo {
 
         /// \brief Publisher option disconnect function
         void LidarTopicDisconnected();
+
+        void OnUpdate(sensors::RaySensorPtr _sensor);
+
+        /// \brief Initial model plugin callbacks
+        void CheckInitConnected();
+        void CheckInitDisconnect();
     };
 
 }

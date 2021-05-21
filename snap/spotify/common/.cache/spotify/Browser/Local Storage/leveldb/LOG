@@ -1,0 +1,6 @@
+2021/05/06-15:07:07.587 4d95 Reusing MANIFEST /home/vadim/snap/spotify/common/.cache/spotify/Browser/Local Storage/leveldb/MANIFEST-000001
+2021/05/06-15:07:07.587 4d95 Recovering log #4
+2021/05/06-15:07:07.587 4d95 Reusing old log /home/vadim/snap/spotify/common/.cache/spotify/Browser/Local Storage/leveldb/000004.log 
+2021/05/06-15:08:07.589 4d9e Level-0 table #8: started
+2021/05/06-15:08:07.594 4d9e Level-0 table #8: 25568 bytes OK
+2021/05/06-15:08:07.597 4d9e Delete type=0 #4

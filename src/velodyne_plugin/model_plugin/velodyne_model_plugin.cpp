@@ -41,12 +41,12 @@ namespace gazebo {
     }
 
     void Velodyne_model_plugin::PosTopicConnected() {
-        pub_thread = std::thread(std::bind(&Velodyne_model_plugin::PubThread, this));
+//        pub_thread = std::thread(std::bind(&Velodyne_model_plugin::PubThread, this));
         PRINT_CUSTOM_INFO("VELODYNE MODEL POSITION TOPIC CONNECTED");
     }
 
     void Velodyne_model_plugin::PosTopicDisconnected() {
-        pub_thread.detach();
+//        pub_thread.detach();
         PRINT_CUSTOM_INFO("VELODYNE MODEL POSITION TOPIC DISCONNECTED");
     }
 
@@ -125,6 +125,15 @@ namespace gazebo {
         this->rosQueueThread =
                 std::thread(std::bind(&Velodyne_model_plugin::QueueThread, this));
 
+        pub_thread = std::thread(std::bind(&Velodyne_model_plugin::PubThread, this));
+
+        ros::SubscribeOptions so_init =
+                ros::SubscribeOptions::create<std_msgs::Float32>(
+                        "/gazebo_client/check_initial_topic_ros",
+                        1,
+                        boost::bind(&Velodyne_model_plugin::OnRosMsg, this, _1),
+                        ros::VoidPtr(), &this->rosQueueInited);
+        this->rosSub = this->rosNode->subscribe(so_init);
         PRINT_CUSTOM_INFO("VELODYNE MODEL LOAD END");
     }
 

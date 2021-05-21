@@ -54,8 +54,10 @@ namespace gazebo {
     private:
         std::unique_ptr<ros::NodeHandle> rosNode; /// \brief A node use for ROS transport
         ros::Subscriber rosSub; /// \brief A ROS subscriber
+        ros::Subscriber rosSubInited; /// \brief A ROS subscriber inited
         ros::Publisher rosPub; /// \brief A ROS publisher
         ros::CallbackQueue rosQueue; /// \brief A ROS callbackqueue that helps process messages
+        ros::CallbackQueue rosQueueInited; /// \brief A ROS callbackqueue that helps process messages
         std::thread rosQueueThread; /// \brief A thread the keeps running the rosQueue
 
         transport::NodePtr node; /// \brief A node used for transport

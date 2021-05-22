@@ -64,14 +64,18 @@ namespace gazebo {
 
     void Velodyne_sensor_plugin::SyncFunc(const msg_generatorstd_msgs::VelodyneModelConstPtr &model,
                                           const msg_generatorstd_msgs::VelodyneSensorConstPtr &sensor) {
-        PRINT_CUSTOM_INFO("VELODYNE SENSOR SYNCED BEGIN");
+        msg_generatorstd_msgs::VelodyneSensor msg;
+        msg.header.stamp = sensor->header.stamp;
+        msg.angle = model->angle;
+        msg.dist = std::move(sensor->dist);
+        this->rosPubExternal.publish(msg);
     }
 
     ////////////////////////////////////////
     ////    Public members
     ////////////////////////////////////////
 
-    Velodyne_sensor_plugin::Velodyne_sensor_plugin()/* : sync(mfsm, mfss, 10)*/ {
+    Velodyne_sensor_plugin::Velodyne_sensor_plugin() {
         PRINT_CUSTOM_INFO("VELODYNE SENSOR CTOR BEGIN");
         _topic_lidar_data_name = "/velodyne/_tmpld";
         PRINT_CUSTOM_INFO("VELODYNE SENSOR CTOR END");
@@ -106,6 +110,15 @@ namespace gazebo {
                         boost::bind(&Velodyne_sensor_plugin::LidarTopicDisconnected, this),
                         ros::VoidPtr(), NULL);
         this->rosPubInternal = this->rosNode->advertise(ao);
+
+        ros::AdvertiseOptions ao_ext =
+                ros::AdvertiseOptions::create<msg_generatorstd_msgs::VelodyneSensor>(
+                        "/velodyne/lidar_data",
+                        10,
+                        boost::bind(&Velodyne_sensor_plugin::LidarTopicConnected, this),
+                        boost::bind(&Velodyne_sensor_plugin::LidarTopicDisconnected, this),
+                        ros::VoidPtr(), NULL);
+        this->rosPubExternal = this->rosNode->advertise(ao_ext);
 
         ros::AdvertiseOptions ao_tmp =
                 ros::AdvertiseOptions::create<std_msgs::Float32>(

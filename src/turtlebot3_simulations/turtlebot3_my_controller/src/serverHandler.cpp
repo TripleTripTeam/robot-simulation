@@ -13,19 +13,22 @@ void serverHandler::deinit() {
 }
 
 std::pair<double, double> serverHandler::getControlVector(std::pair<double, double> last_com_vector) {
-    auto retv = SCL::send_GET_request("http://192.168.43.25:8000/remote_cars/coordinates/1/move");
+//    auto retv = SCL::send_GET_request("http://192.168.43.25:8000/remote_cars/coordinates/1/move");
+    auto retv = SCL::send_GET_request("http://192.168.43.25:8000/moveCar");
     if (retv.empty())
         return last_com_vector;
     return std::pair<double, double>(retv["speed"], retv["angle"]);
 }
+
 #include <iostream>
-void serverHandler::sendCarTelemetry(double x, double y, double z, std::array<double, 360> data) {
+
+void serverHandler::sendCarTelemetry(double x, double y, double z, double angle, std::vector<double> data) {
     json tmp = {
             {"x", x},
             {"y", y},
             {"z", z},
-            {"data_lidar", data}
+            {"phi", angle},
+            {"dist", data}
     };
-    std::cout << tmp << std::endl;
-    SCL::send_POST_request("http://192.168.43.25:8000/remote_cars/coordinates/1/send", tmp);
+    SCL::send_POST_request("http://192.168.43.25:8000/sendCoords", tmp);
 }

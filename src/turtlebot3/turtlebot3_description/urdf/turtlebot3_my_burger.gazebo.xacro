@@ -103,7 +103,7 @@
 
     <gazebo>
         <plugin name="velodyne_model_control" filename="libvelodyne_model_plugin.so">
-            <rotate_speed>10</rotate_speed>
+            <rotate_speed>5</rotate_speed>
         </plugin>
     </gazebo>
     
@@ -114,14 +114,9 @@
                 <pose>0 0 0.04 1.5707 0 -1.6</pose>
                 <visualize>true</visualize>
                 <ray>
-                    <noise>
-                        <type>gaussian</type>
-                        <mean>0.0</mean>
-                        <stddev>0.02</stddev>
-                    </noise>
                     <scan>
                         <horizontal>
-                            <samples>32</samples>
+                            <samples>42</samples>
                             <resolution>1</resolution>
                             <min_angle>-0.33529248</min_angle>
                             <max_angle>0.18622663</max_angle>
@@ -129,7 +124,7 @@
                     </scan>
                     <range>
                         <min>0.05</min>
-                        <max>70</max>
+                        <max>5</max>
                         <resolution>0.02</resolution>
                     </range>
                 </ray>

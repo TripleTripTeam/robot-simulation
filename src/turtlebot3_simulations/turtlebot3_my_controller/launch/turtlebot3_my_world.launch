@@ -24,8 +24,8 @@
 
     <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf"
           args="-urdf -model turtlebot3_$(arg model) -x $(arg x_rpos) -y $(arg y_rpos) -z $(arg z_rpos) -param robot_description"/>
-<!--    <node pkg="gazebo_ros" type="spawn_model" name="spawn_house"-->
-<!--          args="-sdf -file $(arg house_model_path) -x $(arg x_hpos) -y $(arg y_hpos) -z $(arg z_hpos) -model my_house"/>-->
+    <node pkg="gazebo_ros" type="spawn_model" name="spawn_house"
+          args="-sdf -file $(arg house_model_path) -x $(arg x_hpos) -y $(arg y_hpos) -z $(arg z_hpos) -model my_house"/>
 <!--    <node pkg="gazebo_ros" type="spawn_model" name="spawn_brick"-->
 <!--          args="-sdf -file $(arg brick_model_path) -x -6.55 -y 2.17 -z 0 -model brick"/>-->
 </launch>

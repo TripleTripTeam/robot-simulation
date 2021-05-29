@@ -23,10 +23,10 @@
 
 #include <utility>
 
-#include <sensor_msgs/LaserScan.h>
 #include <sensor_msgs/Image.h>
 #include <geometry_msgs/Twist.h>
 #include <nav_msgs/Odometry.h>
+#include "VelodyneSensor.h"
 
 #define DEG2RAD (M_PI / 180.0)
 #define RAD2DEG (180.0 / M_PI)
@@ -79,7 +79,8 @@ private:
     double _x_pos;
     double _y_pos;
     double _z_pos;
-    std::array<double, 360> _lidar_data;
+    double _angle;
+    std::vector<double> _lidar_data;
 
     double tb3_pose_;
     double prev_tb3_pose_;
@@ -87,7 +88,7 @@ private:
     // Function prototypes
     void updatecommandVelocity(double linear, double angular);
 
-    void laserScanMsgCallBack(const sensor_msgs::LaserScan::ConstPtr &msg);
+    void laserScanMsgCallBack(const msg_generatorstd_msgs::VelodyneSensorConstPtr &msg);
 
     void odomMsgCallBack(const nav_msgs::Odometry::ConstPtr &msg);
 

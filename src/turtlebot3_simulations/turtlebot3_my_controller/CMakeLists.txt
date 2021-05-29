@@ -33,7 +33,7 @@ find_package(gazebo REQUIRED)
 ################################################################################
 # Declare ROS dynamic reconfigure parameters
 ################################################################################
-#add_definitions(-DTURTLEBOT3_SERVER_CONNECTED)
+add_definitions(-DTURTLEBOT3_SERVER_CONNECTED)
 ################################################################################
 # Declare catkin specific configuration to be passed to dependent projects
 ################################################################################

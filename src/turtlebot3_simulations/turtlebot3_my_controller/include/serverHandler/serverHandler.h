@@ -16,7 +16,7 @@ namespace serverHandler {
 
     std::pair<double, double> getControlVector(std::pair<double, double> last_com_vector);
 
-    void sendCarTelemetry(double x, double y, double z, std::array<double, 360> data);
+    void sendCarTelemetry(double x, double y, double z, double angle, std::vector<double> data);
 
 }
 

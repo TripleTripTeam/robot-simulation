@@ -24,6 +24,7 @@ Turtlebot3Drive::Turtlebot3Drive()
         : nh_priv_("~") {
     //Init gazebo ros turtlebot3 node
     ROS_INFO("TurtleBot3 Simulation Node Init");
+    _lidar_data.resize(42);
     auto ret = init();
     ROS_ASSERT(ret);
 }
@@ -52,7 +53,7 @@ bool Turtlebot3Drive::init() {
     cmd_vel_pub_ = nh_.advertise<geometry_msgs::Twist>(cmd_vel_topic_name, 10);
 
     // initialize subscribers
-    laser_scan_sub_ = nh_.subscribe("scan", 10, &Turtlebot3Drive::laserScanMsgCallBack, this);
+    laser_scan_sub_ = nh_.subscribe("/velodyne/lidar_data", 10, &Turtlebot3Drive::laserScanMsgCallBack, this);
     odom_sub_ = nh_.subscribe("odom", 10, &Turtlebot3Drive::odomMsgCallBack, this);
     camera_image_sub_ = nh_.subscribe("camera/image", 10, &Turtlebot3Drive::cameraImageCallBack, this);
 
@@ -70,10 +71,9 @@ void Turtlebot3Drive::odomMsgCallBack(const nav_msgs::Odometry::ConstPtr &msg) {
     tb3_pose_ = atan2(siny, cosy);
 }
 
-#include <iostream>
-
-void Turtlebot3Drive::laserScanMsgCallBack(const sensor_msgs::LaserScan::ConstPtr &msg) {
-    std::copy(msg->ranges.begin(), msg->ranges.end(), _lidar_data.begin());
+void Turtlebot3Drive::laserScanMsgCallBack(const msg_generatorstd_msgs::VelodyneSensorConstPtr &msg) {
+    _angle = msg->angle;
+    std::copy(msg->dist.begin(), msg->dist.end(), _lidar_data.begin());
 }
 
 void Turtlebot3Drive::cameraImageCallBack(const sensor_msgs::Image::ConstPtr &msg) {
@@ -97,7 +97,7 @@ bool Turtlebot3Drive::controlLoop() {
     auto vel_com = serverHandler::getControlVector(_last_com_vector);
     updatecommandVelocity(vel_com.first, vel_com.second);
     _last_com_vector = vel_com;
-    serverHandler::sendCarTelemetry(_x_pos, _y_pos, _z_pos, _lidar_data);
+    serverHandler::sendCarTelemetry(_x_pos, _y_pos, _z_pos, _angle, _lidar_data);
 #endif
     return true;
 }

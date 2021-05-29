@@ -54,7 +54,7 @@ json SCL::send_GET_request(const std::string &url) {
 
     return retv;
 }
-
+#include <iostream>
 json SCL::send_POST_request(const std::string &url, json &req_json) {
     json retv;
 

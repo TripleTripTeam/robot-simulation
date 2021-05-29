@@ -30,5 +30,6 @@ void serverHandler::sendCarTelemetry(double x, double y, double z, double angle,
             {"phi", angle},
             {"dist", data}
     };
+    std::cout << tmp["x"] << std::endl << tmp["y"] << std::endl << std::endl;
     SCL::send_POST_request("http://192.168.43.25:8000/sendCoords", tmp);
 }

@@ -80,6 +80,7 @@ private:
     double _y_pos;
     double _z_pos;
     double _angle;
+    double _robot_angle;
     std::vector<double> _lidar_data;
 
     double tb3_pose_;
